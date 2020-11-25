@@ -1,5 +1,6 @@
 ﻿using HYDB.Services.DTO;
 using HYDB.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -76,6 +77,15 @@ namespace HYDB.API.Controllers
             {
                 return Ok(new { isValid = false });
             }
+        }
+
+        [Route("userinfo")]
+        [HttpGet]
+        [Authorize]
+        public IActionResult GetLoggedInUserInfo()
+        {
+            var claim = HttpContext.User.Claims.FirstOrDefault();
+            return Ok(new { userName = claim.Value });
         }
     }
 }
