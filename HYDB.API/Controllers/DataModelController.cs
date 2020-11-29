@@ -46,6 +46,21 @@ namespace HYDB.API.Controllers
             }
         }
 
+        [Route("delete")]
+        [HttpGet]
+        [Authorize]
+        public IActionResult DeleteDataModel()
+        {
+            if (Request.Query.ContainsKey("modelId"))
+            {
+                return Ok(_dataModelService.DeleteDataModel(Request.Query["modelId"]));
+            }
+            else
+            {
+                return BadRequest("No data model id is provided");
+            }
+        }
+
         [Route("property/addnew")]
         [HttpPost]
         [Authorize]
