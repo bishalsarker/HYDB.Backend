@@ -31,6 +31,14 @@ namespace HYDB.API.Controllers
             return Ok(_dataModelService.AddNewDataModel(newDataModel, HttpContext.User.Claims.FirstOrDefault().Value));
         }
 
+        [Route("update")]
+        [HttpPost]
+        [Authorize]
+        public IActionResult UpdateProperty(DataModelPayload updateModel)
+        {
+            return Ok(_dataModelService.RenameDataModel(updateModel));
+        }
+
         [Route("get")]
         [HttpGet]
         [Authorize]
