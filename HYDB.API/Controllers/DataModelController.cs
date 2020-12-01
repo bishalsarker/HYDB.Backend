@@ -16,11 +16,11 @@ namespace HYDB.API.Controllers
     [ApiController]
     public class DataModelController : ControllerBase
     {
-        private readonly DataModelManagement _dataModelService;
+        private readonly IDataModelManagement _dataModelService;
 
-        public DataModelController(IConfiguration config, IMapper mapper)
+        public DataModelController(IDataModelManagement dataModelService)
         {
-            _dataModelService = new DataModelManagement(config, mapper);
+            _dataModelService = dataModelService;
         }
 
         [Route("addnew")]
