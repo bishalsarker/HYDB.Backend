@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HYDB.Services", "..\HYDB.Sh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HYDB.Home", "HYDB.Home\HYDB.Home.csproj", "{A08590EA-F2D9-4226-AF44-324D456388CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HYDB.DbConsole", "HYDB.DbConsole\HYDB.DbConsole.csproj", "{C04C2115-2396-4821-BE8B-7944A705F234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HYDB.DbConsole", "HYDB.DbConsole\HYDB.DbConsole.csproj", "{C04C2115-2396-4821-BE8B-7944A705F234}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HYDB.FilterEngine", "..\HYDB.Shared\HYDB.Backend\HYDB.FilterEngine\HYDB.FilterEngine.csproj", "{00DCDD04-105D-4B81-826C-A38450AFE8DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C04C2115-2396-4821-BE8B-7944A705F234}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C04C2115-2396-4821-BE8B-7944A705F234}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C04C2115-2396-4821-BE8B-7944A705F234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00DCDD04-105D-4B81-826C-A38450AFE8DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00DCDD04-105D-4B81-826C-A38450AFE8DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00DCDD04-105D-4B81-826C-A38450AFE8DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00DCDD04-105D-4B81-826C-A38450AFE8DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
