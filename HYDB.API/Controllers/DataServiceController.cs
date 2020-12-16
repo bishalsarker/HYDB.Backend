@@ -72,7 +72,7 @@ namespace HYDB.API.Controllers
         [Route("operation/addnew")]
         [HttpPost]
         [Authorize]
-        public IActionResult AddNewProperty(ServiceOperationPayload newServiceOperation)
+        public IActionResult AddNewOperation(ServiceOperationPayload newServiceOperation)
         {
             return Ok(_dataService.AddNewOperation(newServiceOperation));
         }
@@ -95,7 +95,7 @@ namespace HYDB.API.Controllers
         [Route("operation/update")]
         [HttpPost]
         [Authorize]
-        public IActionResult UpdateProperty(ServiceOperationPayload updateProperty)
+        public IActionResult UpdateOperation(ServiceOperationPayload updateProperty)
         {
             return Ok(_dataService.EditOperation(updateProperty));
         }
@@ -103,7 +103,7 @@ namespace HYDB.API.Controllers
         [Route("operation/delete")]
         [HttpGet]
         [Authorize]
-        public IActionResult DeleteProperty()
+        public IActionResult DeleteOperation()
         {
             if (Request.Query.ContainsKey("opId"))
             {
@@ -113,6 +113,14 @@ namespace HYDB.API.Controllers
             {
                 return BadRequest("No operation id is provided");
             }
+        }
+
+        [Route("operation/updatescript")]
+        [HttpPost]
+        [Authorize]
+        public IActionResult UpdateScript(ServiceOperationPayload updateProperty)
+        {
+            return Ok(_dataService.UpdateScript(updateProperty, HttpContext.User.Claims.FirstOrDefault().Value));
         }
     }
 }
