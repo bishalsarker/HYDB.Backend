@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace HYDB.API.Controllers
@@ -31,54 +32,41 @@ namespace HYDB.API.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [Route("run/{serviceName}/{opName}")]
-        public async Task<IActionResult> RunOperation(string serviceName, string opName)
+        [Route("run")]
+        [HttpPost]
+        public IActionResult RunOperation(OperationRequest opRequest)
         {
-            var httpMethod = _httpContextAccessor.HttpContext.Request.Method;
             var userName = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
-            if (httpMethod == "POST")
+            if (!_dataService.ValidateOperation(opRequest.Operation, opRequest.Service, userName).HasError)
             {
-                using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+                var response = new Response();
+                var operation = _dataService.GetOperationByOpeartionName(opRequest.Operation, opRequest.Service, userName);
+                var dataModel = _dataService.GetDataModelFromOperationDataSource(operation, userName);
+                if((operation != null && operation.Type == "mutation") && dataModel != null)
                 {
-                    var validationResult = _dataService.ValidateOperation(opName, serviceName, userName, httpMethod);
-                    if (!validationResult.HasError)
-                    {
-                        var postBody = await reader.ReadToEndAsync();
-                        var dataObjectRequest = JsonConvert.DeserializeObject<DataObjectRequest>(postBody);
-                        _mutationOperationService.AddNewOrUpdateOrDeleteExistingDataObject(
-                            dataObjectRequest.DataObject,
-                            dataObjectRequest.DataModelId
-                        );
-                        return Ok(new Response() { IsSuccess = true, Message = "Mutation operation successfully executed" });
-                    }
-                    else
-                    {
-                        return BadRequest(new Response() { 
-                            IsSuccess = false,
-                            Message = validationResult.Message
-                        });
-                    }
+                    _mutationOperationService.AddNewOrUpdateOrDeleteExistingDataObject(
+                        opRequest.Args,
+                        dataModel.Id
+                    );
+
+                    response.IsSuccess = true;
+                    response.Message = "Mutation operation successfully executed";
                 }
+
+                if ((operation != null && operation.Type == "query") && dataModel != null)
+                {
+                    response = _queryOperationService.Query(opRequest.Operation, opRequest.Service, userName, opRequest.Args);
+                }
+
+                return Ok(response);
             }
             else
             {
-                var validationResult = _dataService.ValidateOperation(opName, serviceName, userName, httpMethod);
-                if (!validationResult.HasError)
+                return BadRequest(new Response()
                 {
-                    var queryParams = _httpContextAccessor.HttpContext.Request.Query["args"];
-                    if (queryParams.Count < 1)
-                    {
-                        return Ok(_queryOperationService.Query(opName, serviceName, userName, null));
-                    }
-                    else
-                    {
-                        return Ok(_queryOperationService.Query(opName, serviceName, userName, queryParams[0]));
-                    }
-                }
-                else
-                {
-                    return BadRequest("Only queries are allowed for GET request");
-                }
+                    IsSuccess = false,
+                    Message = "Not a valid operation request"
+                });
             }
         }
     }
