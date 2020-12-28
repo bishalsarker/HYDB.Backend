@@ -36,37 +36,44 @@ namespace HYDB.API.Controllers
         [HttpPost]
         public IActionResult RunOperation(OperationRequest opRequest)
         {
-            var userName = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
-            if (!_dataService.ValidateOperation(opRequest.Operation, opRequest.Service, userName).HasError)
+            var client = _dataService.GetClientFromRequest(_httpContextAccessor.HttpContext.Request.Headers["X-API-Key"]);
+            if(client != null)
             {
-                var response = new Response();
-                var operation = _dataService.GetOperationByOpeartionName(opRequest.Operation, opRequest.Service, userName);
-                var dataModel = _dataService.GetDataModelFromOperationDataSource(operation, userName);
-                if((operation != null && operation.Type == "mutation") && dataModel != null)
+                if (!_dataService.ValidateOperation(opRequest.Operation, opRequest.Service, client.CreatedBy).HasError)
                 {
-                    _mutationOperationService.AddNewOrUpdateOrDeleteExistingDataObject(
-                        opRequest.Args,
-                        dataModel.Id
-                    );
+                    var response = new Response();
+                    var operation = _dataService.GetOperationByOpeartionName(opRequest.Operation, opRequest.Service, client.CreatedBy);
+                    var dataModel = _dataService.GetDataModelFromOperationDataSource(operation, client.CreatedBy);
+                    if ((operation != null && operation.Type == "mutation") && dataModel != null)
+                    {
+                        _mutationOperationService.AddNewOrUpdateOrDeleteExistingDataObject(
+                            opRequest.Args,
+                            dataModel.Id
+                        );
 
-                    response.IsSuccess = true;
-                    response.Message = "Mutation operation successfully executed";
+                        response.IsSuccess = true;
+                        response.Message = "Mutation operation successfully executed";
+                    }
+
+                    if ((operation != null && operation.Type == "query") && dataModel != null)
+                    {
+                        response = _queryOperationService.Query(opRequest.Operation, opRequest.Service, client.CreatedBy, opRequest.Args);
+                    }
+
+                    return Ok(response);
                 }
-
-                if ((operation != null && operation.Type == "query") && dataModel != null)
+                else
                 {
-                    response = _queryOperationService.Query(opRequest.Operation, opRequest.Service, userName, opRequest.Args);
+                    return BadRequest(new Response()
+                    {
+                        IsSuccess = false,
+                        Message = "Not a valid operation request"
+                    });
                 }
-
-                return Ok(response);
             }
             else
             {
-                return BadRequest(new Response()
-                {
-                    IsSuccess = false,
-                    Message = "Not a valid operation request"
-                });
+                return Unauthorized();
             }
         }
     }
