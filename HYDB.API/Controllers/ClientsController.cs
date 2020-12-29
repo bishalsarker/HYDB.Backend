@@ -38,5 +38,20 @@ namespace HYDB.API.Controllers
         {
             return Ok(_clientsService.GetAllClients(HttpContext.User.Claims.FirstOrDefault().Value));
         }
+
+        [Route("delete")]
+        [HttpDelete]
+        [Authorize]
+        public IActionResult DeleteClient()
+        {
+            if (Request.Query.ContainsKey("clientId"))
+            {
+                return Ok(_clientsService.DeleteClient(Request.Query["clientId"]));
+            }
+            else
+            {
+                return BadRequest("No client id is provided");
+            }
+        }
     }
 }
