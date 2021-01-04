@@ -1,17 +1,7 @@
-﻿using AutoMapper;
-using HYDB.Services.DTO;
+﻿using HYDB.Services.DTO;
 using HYDB.Services.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace HYDB.API.Controllers
 {
